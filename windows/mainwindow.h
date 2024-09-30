@@ -7,6 +7,10 @@
 #include <QPushButton>
 #include <QWidget>
 #include <QSettings>
+#include <QLabel>
+#include <QStackedLayout>
+#include <QStackedWidget>
+
 
 
 QT_BEGIN_NAMESPACE
@@ -20,13 +24,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
+
+    ~MainWindow();
+
 private:
     QWidget *centralWidget;
-    QVBoxLayout* mainLayout, *dataManagerLayout, *flashcardLayout;
-private slots:
-    void generateDataManagerLayout();
-    void generateFlashcardLayout();
-    void generateMainLayout();
+    QVBoxLayout* mainLayout{}, *dataManagerLayout{}, *flashcardLayout{};
 
 
 };

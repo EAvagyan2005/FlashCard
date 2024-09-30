@@ -1,51 +1,57 @@
 #include "mainwindow.h"
 #include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 
 {
-    centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
-    generateMainLayout();
+    auto stackedLayout = new QStackedWidget;
+    auto mainWidget = new QWidget;
+    auto flashcardWidget = new QWidget;
+    auto dataManagerWidget = new QWidget;
+
+    auto setMainLayoutButton = new QPushButton("Set Main Layout");
+    auto setFlashcardLayoutButton = new QPushButton("Set Flashcard Layout");
+    auto setDataManagerLayoutButton = new QPushButton("Set Data Manager Layout");
+
+    auto mainLayout = new QVBoxLayout;
+    auto flashcardLayout = new QVBoxLayout;
+    auto dataManagerLayout = new QVBoxLayout;
+
+    auto mainLabel = new QLabel("Main Layout");
+    auto flashcardLabel = new QLabel("Flashcard Layout");
+    auto dataManagerLabel = new QLabel("Data Manager Layout");
+
+    mainLayout->addWidget(mainLabel);
+    mainLayout->addWidget(setFlashcardLayoutButton);
+    mainLayout->addWidget(setDataManagerLayoutButton);
+    flashcardLayout->addWidget(flashcardLabel);
+    flashcardLayout->addWidget(setMainLayoutButton);
+    flashcardLayout->addWidget(setDataManagerLayoutButton);
+    dataManagerLayout->addWidget(dataManagerLabel);
+    dataManagerLayout->addWidget(setMainLayoutButton);
+    dataManagerLayout->addWidget(setFlashcardLayoutButton);
+
+    mainWidget->setLayout(mainLayout);
+    flashcardWidget->setLayout(flashcardLayout);
+    dataManagerWidget->setLayout(dataManagerLayout);
+
+    stackedLayout->addWidget(mainWidget);
+    stackedLayout->addWidget(flashcardWidget);
+    stackedLayout->addWidget(dataManagerWidget);
+    connect(setMainLayoutButton, &QPushButton::clicked, [=]() {
+        stackedLayout->setCurrentIndex(0);
+    });
+    connect(setFlashcardLayoutButton, &QPushButton::clicked, [=]() {
+        stackedLayout->setCurrentIndex(1);
+    });
+    connect(setDataManagerLayoutButton, &QPushButton::clicked, [=]() {
+        stackedLayout->setCurrentIndex(2);
+    });
+    stackedLayout->setCurrentIndex(0);
+
+    setCentralWidget(stackedLayout);
 }
-void MainWindow::generateMainLayout(){
-    QLayout *currLayout = centralWidget->layout();
-    if (currLayout) delete currLayout;
-    mainLayout = new QVBoxLayout(this);
-    QPushButton* openFlashButton = new QPushButton("Open flashcard");
-    QPushButton* openDataManagerButton = new QPushButton("Open datamanager");
-    mainLayout->addWidget(openFlashButton);
-    connect(openFlashButton, &QPushButton::clicked, this, &MainWindow::generateFlashcardLayout);
-    mainLayout->addWidget(openDataManagerButton);
-    connect(openDataManagerButton, &QPushButton::clicked, this, &MainWindow::generateDataManagerLayout);
-    centralWidget->setLayout(mainLayout);
-
-}
-
-void MainWindow::generateDataManagerLayout(){
-    QLayout *currLayout = centralWidget->layout();
-    if (currLayout) delete currLayout;
-    dataManagerLayout = new QVBoxLayout(this);
-
-    QPushButton* openFlashButton = new QPushButton("Open flashcard");
-    QPushButton* openMainButton = new QPushButton("Open main");
-    dataManagerLayout->addWidget(openFlashButton);
-    connect(openFlashButton, &QPushButton::clicked, this, &MainWindow::generateFlashcardLayout);
-    dataManagerLayout->addWidget(openMainButton);
-    connect(openMainButton, &QPushButton::clicked, this, &MainWindow::generateMainLayout);
-    centralWidget->setLayout(dataManagerLayout);
-}
-
-void MainWindow::generateFlashcardLayout(){
-    QLayout *currLayout = centralWidget->layout();
-    if (currLayout) delete currLayout;
-    flashcardLayout = new QVBoxLayout(this);
-
-    QPushButton* openDataManagerButton = new QPushButton("Open datamanager");
-    QPushButton* openMainButton = new QPushButton("Open main");
-    flashcardLayout->addWidget(openDataManagerButton);
-    connect(openDataManagerButton, &QPushButton::clicked, this, &MainWindow::generateDataManagerLayout);
-    flashcardLayout->addWidget(openMainButton);
-    connect(openMainButton, &QPushButton::clicked, this, &MainWindow::generateMainLayout);
-    centralWidget->setLayout(dataManagerLayout);
+MainWindow::~MainWindow() {
+    delete centralWidget;
 }
